@@ -148,7 +148,7 @@ const BlackJack = function(targetId) {
         setDisplay("Dealer Bust!");
         break;
       case "playerGreater":
-        setDisplay("Your score is greater. You Win!");
+        setDisplay("Player Score Greater");
         break;
       case "dealerGreater":
         setDisplay("Dealer Score Greater");
