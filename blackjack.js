@@ -148,7 +148,7 @@ const BlackJack = function(targetId) {
         setDisplay("Dealer Bust!");
         break;
       case "playerGreater":
-        setDisplay("Player Score Greater");
+        setDisplay("Your score is greater. You Win!");
         break;
       case "dealerGreater":
         setDisplay("Dealer Score Greater");
@@ -299,7 +299,7 @@ const BlackJack = function(targetId) {
         if (whichHand.hand[h - 1].value === whichHand.hand[h - 2].value) {
           pBox.childNodes[4].disabled = false;
         } else {
-          pBox.childNodes[4].disabled = true;
+          pBox.childNodes[4].disabled = false;
         }
       }
       // disable double down button after hitting
@@ -454,7 +454,12 @@ const BlackJack = function(targetId) {
       id: playerHands.length
     });
     newPlayerBox.id = playerHands[playerHands.length - 1].id;
-    const thisHand = playerHands[e.path[1].id];
+    let thisHand;
+    if (e.path){
+      thisHand = playerHands[e.path[1].id];
+    } else {
+      thisHand = playerHands[e.composedPath()[1].id];
+    }
     const splitCard = thisHand.hand.pop();
     splitCard.style.left = 15 + 250 * (playerHands.length - 2) + 250 + "px";
     splitCard.style.top = 290 + "px";
@@ -467,7 +472,12 @@ const BlackJack = function(targetId) {
   };
 
   const doubleDown = e => {
-    const thisHand = playerHands[e.path[1].id];
+    let thisHand;
+    if (e.path){
+      thisHand = playerHands[e.path[1].id];
+    } else {
+      thisHand = playerHands[e.composedPath()[1].id];
+    }
     betNum.innerHTML = betNum.innerHTML * 1 + thisHand.bet * 1;
     thisHand.bet = thisHand.bet * 2;
     flipCard(cardsDealt);
@@ -672,10 +682,10 @@ const BlackJack = function(targetId) {
   felt.appendChild(faster);
 
   function changeDeckNumber(e) {
-    if (e.path[0].innerHTML === "▶" && deckNum.innerHTML < 8) {
+    if (e.composedPath()[0].innerHTML === "▶" && deckNum.innerHTML < 8) {
       deckNum.innerHTML = deckNum.innerHTML * 1 + 1;
       cloneCards();
-    } else if (e.path[0].innerHTML === "◀" && deckNum.innerHTML * 1 > 1) {
+    } else if (e.composedPath()[0].innerHTML === "◀" && deckNum.innerHTML * 1 > 1) {
       deckNum.innerHTML = deckNum.innerHTML * 1 - 1;
       cloneCards();
     }
