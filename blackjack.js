@@ -299,7 +299,7 @@ const BlackJack = function(targetId) {
         if (whichHand.hand[h - 1].value === whichHand.hand[h - 2].value) {
           pBox.childNodes[4].disabled = false;
         } else {
-          pBox.childNodes[4].disabled = false;
+          pBox.childNodes[4].disabled = true;
         }
       }
       // disable double down button after hitting
