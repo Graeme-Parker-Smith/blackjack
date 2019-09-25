@@ -285,12 +285,6 @@ const BlackJack = function(targetId) {
         stand(whichHand);
         setMessage("bust");
       }
-      // handle 5-card charlie
-      //  else if (h > 4) {
-      //   whichHand.status = "charlie";
-      //   setMessage("5charlie");
-      //   stand(whichHand);
-      // }
 
       // last two consecutive cards in hand are equal value?
       // allow splitting button
