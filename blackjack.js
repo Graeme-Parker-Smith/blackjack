@@ -286,8 +286,6 @@ const BlackJack = function(targetId) {
         setMessage("bust");
       }
 
-      // last two consecutive cards in hand are equal value?
-      // allow splitting button
 
       if (whichHand.hand[h - 2]) {
         if (whichHand.hand[h - 1].value === whichHand.hand[h - 2].value) {
