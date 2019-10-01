@@ -240,6 +240,7 @@ const BlackJack = function(targetId) {
           playerHands[0].score === 21
         ) {
           playerHands[0].status = "blackjack";
+          playerBox.childNodes.forEach(node => (node.disabled = true));
           setTimeout(() => stand(playerHands[0]), 500);
           setMessage("blackjack");
         }
@@ -273,13 +274,13 @@ const BlackJack = function(targetId) {
       let pScore = pBox.firstChild;
       pScore.innerHTML = whichHand.score;
       // handle player blackjack
-            if (h === 2) {
-        if (whichHand.score === 21) {
-          whichHand.status = "blackjack";
-          setTimeout(() => stand(whichHand), 500);
-          setMessage("blackjack");
-        }
-      }
+      //       if (h === 2) {
+      //   if (whichHand.score === 21) {
+      //     whichHand.status = "blackjack";
+      //     setTimeout(() => stand(whichHand), 500);
+      //     setMessage("blackjack");
+      //   }
+      // }
       // handle player bust
       if (whichHand.score > 21) {
         changeWinnings(whichHand, false);
