@@ -1,4 +1,5 @@
 const BlackJack = function(targetId) {
+  
   let firstGame = true;
   let bet = 0;
   let winnings = 0;
@@ -705,7 +706,7 @@ const BlackJack = function(targetId) {
   // create "Message" display
   const messageD = document.createElement("div");
   messageD.classList.add("message");
-  messageD.innerHTML = "The BlackJack Table";
+  messageD.innerHTML = "The BlackJack Table -- Dealer Hits on Soft 17";
   const msgList = document.createElement("ul");
   msgList.classList.add("msg-list");
   messageD.appendChild(msgList);
