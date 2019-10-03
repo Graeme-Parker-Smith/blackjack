@@ -112,7 +112,6 @@ const BlackJack = function(targetId) {
   function startDealerTurn() {
     // begin dealer turn
     function dealerTurn() {
-      flipCard(cardsDealt);
       dealCard(dealerHand);
       if (dealerHand.standing === false) {
         setTimeout(() => {
@@ -185,9 +184,6 @@ const BlackJack = function(targetId) {
         break;
       case "tie":
         setDisplay("It's A Tie!");
-        break;
-      case "5charlie":
-        setDisplay("5 Card Charlie! You Win!");
         break;
       case "surrender":
         setDisplay("Player Surrenders Half of Bet!");
@@ -262,11 +258,8 @@ const BlackJack = function(targetId) {
     // push card to hand, update
     stopRedeal();
     whichHand.hand.push(cards[cardsDealt]);
-    // prevent weird card flipping bug
     if (cards[cardsDealt] !== dealerHand.hand[1]){
-      if (!cards[cardsDealt].classList.contains("flip")){
-        cards[cardsDealt].classList.add("flip");
-      }
+      flipCard(whichHand);
     }
     h = whichHand.hand.length;
     calcHandScore(whichHand);
@@ -376,15 +369,16 @@ const BlackJack = function(targetId) {
   }
 
   // flips the chosen card
-  const flipCard = idx => {
+  const flipCard = whichHand => {
     console.trace();
     console.log("cardsDealt is", cardsDealt);
-    console.log("idx is: ", idx);
-    console.log(cards[idx]);
-    if (cards[idx].classList.contains("flip")) {
-      cards[idx].classList.remove("flip");
+    console.log(whichHand);
+    const h = whichHand.hand;
+    console.log("h", h);
+    if (h[h.length - 1].classList.contains("flip")) {
+      h[h.length - 1].classList.remove("flip");
     } else {
-      cards[idx].classList.add("flip");
+      h[h.length - 1].classList.add("flip");
     }
   };
 
@@ -445,7 +439,6 @@ const BlackJack = function(targetId) {
       if (i < 2) {
         (function(idx) {
           setTimeout(() => {
-            flipCard(idx);
             dealCard(playerHands[0]);
           }, (idx * 200) / fast);
         })(i);
@@ -454,9 +447,6 @@ const BlackJack = function(targetId) {
       if (i > 1 && i < 4) {
         (function(idx) {
           setTimeout(() => {
-            if (idx === 2) {
-              flipCard(idx);
-            }
             dealCard(dealerHand);
           }, (idx * 200) / fast);
         })(i);
@@ -477,7 +467,6 @@ const BlackJack = function(targetId) {
     newPlayerBox.childNodes.forEach(node => (node.disabled = false));
     // assign new hit button
     newPlayerBox.childNodes[1].addEventListener("click", () => {
-      flipCard(cardsDealt);
       dealCard(playerHands[newPlayerBox.num]);
     });
     // assign new stand button
@@ -510,10 +499,8 @@ const BlackJack = function(targetId) {
     const splitCard = thisHand.hand.pop();
     splitCard.style.left = 15 + 250 * (playerHands.length - 2) + 250 + "px";
     splitCard.style.top = 290 + "px";
-    flipCard(cardsDealt);
     dealCard(thisHand);
     playerHands[playerHands.length - 1].hand.push(splitCard);
-    flipCard(cardsDealt);
     dealCard(playerHands[playerHands.length - 1]);
     betNum.innerHTML = betNum.innerHTML * 1 + bet * 1;
   };
@@ -527,7 +514,6 @@ const BlackJack = function(targetId) {
     }
     betNum.innerHTML = betNum.innerHTML * 1 + thisHand.bet * 1;
     thisHand.bet = thisHand.bet * 2;
-    flipCard(cardsDealt);
     dealCard(thisHand);
     stand(thisHand);
   };
@@ -680,7 +666,6 @@ const BlackJack = function(targetId) {
   hitBtn.classList.add("hit-btn");
   hitBtn.innerHTML = "HIT";
   hitBtn.addEventListener("click", () => {
-    flipCard(cardsDealt);
     dealCard(playerHands[0]);
   });
   playerBox.appendChild(hitBtn);
