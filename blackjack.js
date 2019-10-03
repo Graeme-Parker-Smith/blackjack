@@ -13,6 +13,14 @@ const BlackJack = function(targetId) {
   let message = "";
 
   const changeWinnings = (thisHand, winner, mult = 1) => {
+    // console.log("hand.status: ", playerHands[0].status);
+    // console.log("Dealerhand.status: ", dealerHand.status);
+    // console.log("Player Score: ", playerHands[0].score);
+    // console.log("Dealerhand.score: ", dealerHand.score);
+    // console.log("thisHand.bet: ", thisHand.bet);
+    // console.log("winner is: ", winner);
+    // console.log("mult is: ", mult);
+    // console.trace();
     if (winner) {
       thisHand.status = "win";
       winnings += thisHand.bet * mult;
@@ -26,7 +34,13 @@ const BlackJack = function(targetId) {
 
   // calculate win or lose hands
   const calcWinner = () => {
+    // console.log("hand.status: ", playerHands[0].status);
+    // console.log("Dealerhand.status: ", dealerHand.status);
+    // console.log("Player Score: ", playerHands[0].score);
+    // console.log("Dealerhand.score: ", dealerHand.score);
     playerHands.forEach(h => {
+      // console.log("hand.status: ", h.status);
+      // console.log("Dealerhand.status: ", dealerHand.status);
       if (dealerHand.status === "blackjack" && h.status !== "lose")
         changeWinnings(h, false);
       if (
@@ -44,8 +58,11 @@ const BlackJack = function(targetId) {
           setMessage("playerGreater");
         }
         if (dealerHand.status === "lose") changeWinnings(h, true);
-        if (h.status === "blackjack" && dealerHand.status !== "blackjack")
+        if (h.status === "blackjack" && dealerHand.status !== "blackjack"){
+          // console.log("h.status!!!!!!!!!", h.status);
+          setMessage("blackjack");
           changeWinnings(h, true, 1.5);
+        }
         if (dealerHand.score === h.score && h.status === null) {
           h.status = "tie";
           setMessage("tie");
@@ -67,7 +84,9 @@ const BlackJack = function(targetId) {
       const thisBox = document.getElementById(thisHand.id);
       thisBox.childNodes.forEach(node => (node.disabled = true));
       if (playerHands.every(hand => hand.standing === true)) {
-        startDealerTurn();
+        setTimeout(function() {
+          startDealerTurn();
+        }, 300 / fast);
       }
     }
   };
@@ -101,7 +120,11 @@ const BlackJack = function(targetId) {
         }, 500 / fast);
       }
     }
-    flipCard(3);
+    if (dealerHand.hand[1].classList.contains("flip")) {
+      dealerHand.hand[1].classList.remove("flip");
+    } else {
+      dealerHand.hand[1].classList.add("flip");
+    }
     calcHandScore(dealerHand);
     dealerScore.innerHTML = dealerHand.score;
     // handle dealer blackjack
@@ -111,7 +134,7 @@ const BlackJack = function(targetId) {
       stand(dealerHand);
     } else if (
       // Does dealer need to draw a third card? If no, then stand
-      playerHands.every(h => h.status !== null || h.score < dealerHand.score) ||
+      playerHands.every(h => h.status !== null ) ||
       (dealerHand.score >= 17 &&
         dealerHand.hand.every(card => card.value !== 11)) ||
       dealerHand.score >= 18
@@ -179,6 +202,7 @@ const BlackJack = function(targetId) {
     for (let i = 0; i < discard.length; i++) {
       discard[i].classList.remove("flip");
       discard[i].classList.remove("dealt");
+      discard[i].classList.remove("discard");
     }
   };
 
@@ -215,17 +239,41 @@ const BlackJack = function(targetId) {
     }
   };
 
+  function stopRedeal(){
+    if (cards[cardsDealt].classList.contains("dealt")){
+      cardsDealt++;
+      stopRedeal();
+    }
+  }
+
+  const dealerBJ = () => {
+      if (dealerHand.hand[0].value + dealerHand.hand[1].value === 21) {
+        stand(playerHands[0]);
+      }
+  }
+
   // deal cards
   const dealCard = whichHand => {
+    // console.log("cardsDealt: ", cardsDealt);
+    let h = whichHand.hand.length;
+    if (dealerHand.hand.length === 2){
+      dealerBJ();
+    }
     // push card to hand, update
-    // let thisCard = cards[cardsDealt];
-        whichHand.hand.push(cards[cardsDealt]);
+    stopRedeal();
+    whichHand.hand.push(cards[cardsDealt]);
+    // prevent weird card flipping bug
+    if (cards[cardsDealt] !== dealerHand.hand[1]){
+      if (!cards[cardsDealt].classList.contains("flip")){
+        cards[cardsDealt].classList.add("flip");
+      }
+    }
+    h = whichHand.hand.length;
     calcHandScore(whichHand);
-    // cardsInPlay.push(cards[cardsDealt]);
-    // cards.splice(cardsDealt, 1);
-    const h = whichHand.hand.length;
     // if dealing card to dealer...
     if (whichHand === dealerHand) {
+      // console.log("dealerHand.length: ",h);
+
       // update dealer score display and assign new card positions
       dealerScore.innerHTML = whichHand.score;
       cards[cardsDealt].fromtop = -200 + 160 * Math.floor((h - 1) / 2);
@@ -233,16 +281,14 @@ const BlackJack = function(targetId) {
       // handle dealer blackjack
       if (h === 2) {
         surrender.disabled = false;
-        if (dealerHand.hand[0].value + dealerHand.hand[1].value === 21) {
-          stand(playerHands[0]);
-        } else if (
+         if (
           playerHands[0].hand.length === 2 &&
-          playerHands[0].score === 21
+          playerHands[0].score === 21 &&
+          playerHands[0].standing === false
         ) {
           playerHands[0].status = "blackjack";
           playerBox.childNodes.forEach(node => (node.disabled = true));
           setTimeout(() => stand(playerHands[0]), 500);
-          setMessage("blackjack");
         }
       }
       // handle dealer bust
@@ -252,7 +298,7 @@ const BlackJack = function(targetId) {
         stand(dealerHand);
       } else {
         // if dealer's turn, check if player hands have lost yet
-        if (h > 2) calcWinner();
+        // if (h > 2) calcWinner();
         // check if dealer should stand
         if (
           (dealerHand.score >= 17 &&
@@ -263,6 +309,7 @@ const BlackJack = function(targetId) {
           stand(dealerHand);
       }
     } else {
+      // console.log("playerHand.length:", h);
       surrender.disabled = true;
       // if dealing card to player...
       // assign player card positions
@@ -284,6 +331,7 @@ const BlackJack = function(targetId) {
       // handle player bust
       if (whichHand.score > 21) {
         changeWinnings(whichHand, false);
+        whichHand.status === "lose";
         stand(whichHand);
         setMessage("bust");
       }
@@ -329,6 +377,10 @@ const BlackJack = function(targetId) {
 
   // flips the chosen card
   const flipCard = idx => {
+    console.trace();
+    console.log("cardsDealt is", cardsDealt);
+    console.log("idx is: ", idx);
+    console.log(cards[idx]);
     if (cards[idx].classList.contains("flip")) {
       cards[idx].classList.remove("flip");
     } else {
@@ -340,8 +392,9 @@ const BlackJack = function(targetId) {
     for (let i = cards.length - 1; i >= 0; i--) {
       cards[i].style.top = 0;
       cards[i].style.left = 0;
-      if (cards[i].classList.contains("flip")) {
-        // cards[i].classList.remove("flip");
+      if (cards[i].classList.contains("dealt")) {
+        cards[i].classList.remove("dealt");
+        cards[i].classList.add("discard");
         cards[i].style.left = 100 + "px";
         discard.push(cards[i]);
         cards.splice(i, 1);
@@ -601,11 +654,17 @@ const BlackJack = function(targetId) {
     winnings -= playerHands[0].bet * 0.5;
     winningsD.innerHTML = `Winnings: ${winnings}`;
     setMessage("surrender");
-    stand(playerHands[0]);
+    // stand(playerHands[0]);
+    playerBox.childNodes.forEach(node => (node.disabled = true));
+    if (dealerHand.hand[1].classList.contains("flip")) {
+      dealerHand.hand[1].classList.remove("flip");
+    } else {
+      dealerHand.hand[1].classList.add("flip");
+    }
+    calcHandScore(dealerHand);
     setTimeout(function() {
-      stand(dealerHand);
       reset();
-    }, 500);
+    }, 1000);
   }
 
   // create "surrender" button
