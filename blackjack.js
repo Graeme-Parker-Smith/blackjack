@@ -370,11 +370,11 @@ const BlackJack = function(targetId) {
 
   // flips the chosen card
   const flipCard = whichHand => {
-    console.trace();
-    console.log("cardsDealt is", cardsDealt);
-    console.log(whichHand);
+    // console.trace();
+    // console.log("cardsDealt is", cardsDealt);
+    // console.log(whichHand);
     const h = whichHand.hand;
-    console.log("h", h);
+    // console.log("h", h);
     if (h[h.length - 1].classList.contains("flip")) {
       h[h.length - 1].classList.remove("flip");
     } else {
@@ -413,6 +413,7 @@ const BlackJack = function(targetId) {
     deckUp.style.pointerEvents = "auto";
     deckDown.style.pointerEvents = "auto";
     surrender.disabled = true;
+    playerBox.childNodes.forEach(node => (node.disabled = true));
   };
 
   // calculate value of card
