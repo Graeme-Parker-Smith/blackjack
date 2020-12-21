@@ -228,7 +228,7 @@ const BlackJack = function(targetId) {
     let imgSrc;
     for (let i = 0; i < 52 * deckNum.innerHTML; i++) {
       imgSrc = `./PNG/${cardImages[i]}.png`;
-      cards[i].firstChild.firstChild.innerHTML = `<img src=${imgSrc} >`;
+      cards[i].firstChild.firstChild.innerHTML = `<img src=${imgSrc} alt="front of card" >`;
       cards[i].value = calcVal(cardImages[i]);
       cards[i].style.top = 0;
       cards[i].style.left = 0;
@@ -769,7 +769,7 @@ const BlackJack = function(targetId) {
   cardFlipper.appendChild(cardFlipperFront);
   const cardFlipperBack = document.createElement("div");
   cardFlipperBack.classList.add("back");
-  cardFlipperBack.innerHTML = '<img src="./PNG/purple_back.png" />';
+  cardFlipperBack.innerHTML = '<img src="./PNG/purple_back.png" alt="back of card" />';
   cardFlipper.appendChild(cardFlipperBack);
   // add children to card
   card.appendChild(cardFlipper);
